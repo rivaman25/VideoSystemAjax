@@ -1,11 +1,31 @@
+import { setCookie, getCookie } from "./util.js";
+
 class VideoSystemController {
     #model;
     #view;
+    #auth;
+    #user;
 
-    constructor(videoSystemModel, videoSystemView) {
+    constructor(videoSystemModel, videoSystemView, auth) {
         this.#model = videoSystemModel;
         this.#view = videoSystemView;
-        this.onLoad(); // La carga inicial de datos se invoca al inicio de la aplicación
+        this.#auth = auth;
+        this.#user = null;
+        this.onLoad();
+    }
+
+    /** Evento de aplicación que invoca la carga de objetos */
+    onLoad() {
+        // Comprueba si están aceptadas las cookies
+        if (getCookie("cookiesConsent") !== "true") {
+            this.#view.showCookieConsent();
+            this.#view.bindShowCookieConsent(this.handleCookieConsent);
+        }
+        this.#LoadObjects();
+        this.onAddCategory();
+        this.onAddActor();
+        this.onAddDirector();
+        this.onProductionRandomList();
         this.#view.bindInit(this.handleInit);
         this.#view.bindProductionsCategoryList(
             this.handleProductionsCategoryList,
@@ -15,34 +35,51 @@ class VideoSystemController {
         );
         this.#view.bindShowProduction(this.handleShowProduction);
         this.#view.bindCloseDetails(this.handleCloseDetails);
-    }
-
-    /** Evento de aplicación que invoca la carga de objetos */
-    onLoad = () => {
-        this.#LoadObjects();
-        this.onAddCategory();
-        this.onAddActor();
-        this.onAddDirector();
-        this.onProductionRandomList();
-        this.#view.showAdminMenu(); // Crea del menú Administración
+        // Crea del menú Administración
+        this.#view.showAdminMenu();
         // bind para lanzar el formulario de nueva producción, se invoca después de crear el menú Administración
         this.#view.bindShowNewProductionForm(this.handleShowNewProductionForm);
         // bind para lanzar el formulario para eliminar una producción
         this.#view.bindShowDeleteProductionForm(
             this.handleShowDeleteProductionForm,
         );
+        // bind para lanzar el formulario para actualizar dirección y reparto de una producción
         this.#view.bindShowUpdateProductionCastForm(
             this.handleShowUpdateProductionCastForm,
         );
+        // Comprueba si el usuario ha iniciado sesión
+        if (getCookie("activeUser")) {
+        } else {
+            this.#view.showIdentificationLink();
+            this.#view.bindIdentificationLink(this.handleLoginForm);
+        }
+    }
+
+    handleCookieConsent = () => {
+        setCookie("cookiesConsent", "true");
+    };
+
+    handleLoginForm = () => {
+        this.#view.showLogin();
+        this.#view.bindLogin(this.handleLogin);
+    };
+
+    handleLogin = (username, password) => {
+        if (this.#auth.validateUser(username, password)) {
+            this.#user = this.#auth.getUser(username);
+            // this.onOpenSession();
+        } else {
+            this.#view.showInvalidUserMessage();
+        }
     };
 
     /** Método privado para instanciar los objetos */
     #LoadObjects() {
         // --- Crear usuario ---
         const user = this.#model.createUser(
-            "manuel",
-            "manuel@example.com",
-            "1234",
+            "admin",
+            "admin@example.com",
+            "admin",
         );
         this.#model.addUser(user);
 

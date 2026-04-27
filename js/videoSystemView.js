@@ -574,11 +574,6 @@ class VideoSystemView {
     showNewProductionForm(directors, actors) {
         this.main.replaceChildren();
 
-        const container = document.createElement("div");
-        container.classList.add("container");
-        container.classList.add("my-3");
-        container.id = "new-production";
-
         let directorsHtml = "";
         for (const director of directors) {
             directorsHtml += `<option value="${director.name}${director.lastname1}">
@@ -591,9 +586,9 @@ class VideoSystemView {
                 ${actor.name} ${actor.lastname1}</option>`;
         }
 
-        container.insertAdjacentHTML(
+        this.main.insertAdjacentHTML(
             "beforeend",
-            `<div class="card mx-0">
+            `<div class="card mx-0 mt-3">
                 <div class="card-body">
                     <h3 class="card-title">Crear producción</h3>
                     <form name="fNewProduction" role="form" class="row mt-1 g-3" novalidate>
@@ -685,23 +680,17 @@ class VideoSystemView {
                         </div>
                         <div class="mb-12">
                             <button class="btn btn-primary" type="submit">Enviar</button>
-                            <button class="btn btn-primary" type="reset">Cancelar</button>
+                            <button class="btn btn-secondary" type="reset">Cancelar</button>
                         </div>
                     </form>
                 </div>
             </div>`,
         );
-        this.main.append(container);
     }
 
     /** Muestra el formulario para eliminar una producción */
     showDeleteProductionForm(productions) {
         this.main.replaceChildren();
-
-        const container = document.createElement("div");
-        container.classList.add("container");
-        container.classList.add("my-3");
-        container.id = "delete-production";
 
         let productionsHtml = "";
         for (const production of productions) {
@@ -709,9 +698,9 @@ class VideoSystemView {
                 ${production.title}</option>`;
         }
 
-        container.insertAdjacentHTML(
+        this.main.insertAdjacentHTML(
             "beforeend",
-            `<div class="card mx-0">
+            `<div class="card mx-0 mt-3">
                 <div class="card-body">
                     <h3 class="card-title">Eliminar producción</h3>
                     <form name="fDeleteProduction" role="form" class="row mt-1 g-3" novalidate>
@@ -726,23 +715,17 @@ class VideoSystemView {
                         </div>
                         <div class="mb-12">
                             <button class="btn btn-primary" type="submit">Eliminar</button>
-                            <button class="btn btn-primary" type="reset">Cancelar</button>
+                            <button class="btn btn-secondary" type="reset">Cancelar</button>
                         </div>
                     </form>
                 </div>
             </div>`,
         );
-        this.main.append(container);
     }
 
     /** Muestra el formulario para actualizar los directores y actores de una producción */
     showUpdateProductionCastForm(productions, directors, actors) {
         this.main.replaceChildren();
-
-        const container = document.createElement("div");
-        container.classList.add("container");
-        container.classList.add("my-3");
-        container.id = "update-production-cast";
 
         let productionsHtml = "";
         for (const prod of productions) {
@@ -762,9 +745,9 @@ class VideoSystemView {
                 ${actor.name} ${actor.lastname1}</option>`;
         }
 
-        container.insertAdjacentHTML(
+        this.main.insertAdjacentHTML(
             "beforeend",
-            `<div class="card mx-0">
+            `<div class="card mx-0 mt-3">
                 <div class="card-body">
                     <h3 class="card-title">Actualizar dirección y reparto</h3>
                     <form name="fupdateProductionCast" role="form" class="row mt-1 g-3" novalidate>
@@ -795,13 +778,12 @@ class VideoSystemView {
                         </div>
                         <div class="mb-12">
                             <button class="btn btn-primary" type="submit">Actualizar</button>
-                            <button class="btn btn-primary" type="reset">Cancelar</button>
+                            <button class="btn btn-secondary" type="reset">Cancelar</button>
                         </div>
                     </form>
                 </div>
             </div>`,
         );
-        this.main.append(container);
     }
 
     /** Muestra la producción y los directores y actores seleccionados
@@ -855,6 +837,82 @@ class VideoSystemView {
         this.toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastTrigger);
         this.toastBootstrap.show();
     }
+
+    showCookieConsent() {
+        this.main.insertAdjacentHTML(
+            "beforeend",
+            `<div class="position-fixed top-50 start-50 translate-middle" style="z-index: 1055;">
+                <div
+                    id="cookieToast"
+                    class="toast text-bg-light"
+                    role="alert"
+                    aria-live="assertive"
+                    aria-atomic="true"
+                    data-bs-autohide="false"
+                >
+                    <div class="toast-header">
+                        <h4 class="me-auto">Aviso de uso de cookies</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" 
+                            aria-label="Close" id="btnDismissCookie"></button>
+                    </div>
+                    <div class="toast-body">
+                        Este sitio web utiliza cookies para mejorar la experiencia del usuario.
+                        <div class="mt-2 pt-2 border-top text-center">
+                            <button type="button" class="btn btn-primary"
+                                id="btnAcceptCookie" data-bs-dismiss="toast">Aceptar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>`,
+        );
+        const toastTrigger = document.getElementById("cookieToast");
+        this.toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastTrigger);
+        this.toastBootstrap.show();
+    }
+
+    showIdentificationLink() {
+        const menuLogin = document.createElement("li");
+        menuLogin.classList.add("nav-item");
+        menuLogin.insertAdjacentHTML(
+            "afterbegin",
+            `<a
+                id="login"
+                class="nav-link"
+                aria-current="page"
+                href="#login"
+            >Login</a>`,
+        );
+        this.menu.append(menuLogin);
+    }
+
+    showLogin() {
+        this.main.replaceChildren();
+        const login = `
+            <div class="card mt-3 mx-auto" style="max-width: 400px;">
+                <div class="card-body">
+                    <h3 class="card-title">Login</h3>
+                    <form name="fLogin" role="form" novalidate>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" id="username" name="username" aria-describedby="username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="password" name="password">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                            <label class="form-check-label" for="remember">Recuérdame</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Acceder</button>
+                    </form>
+                </div>
+            </div>`;
+        this.main.insertAdjacentHTML("afterbegin", login);
+    }
+
+    showDisconectMenu() {}
 
     /** Manejador para apilar entradas en el objeto history */
     #executeHandler(
@@ -1131,6 +1189,41 @@ class VideoSystemView {
 
     bindUpdateProductionCastValidation(handler) {
         updateProductionCastValidation(handler);
+    }
+
+    bindShowCookieConsent(handler) {
+        // Elimina el toast del arbol DOM
+        const cookieToast = document.getElementById("cookieToast");
+        cookieToast.addEventListener("hidden.bs.toast", (event) => {
+            event.currentTarget.parentElement.remove();
+        });
+
+        const btnAccept = document.getElementById("btnAcceptCookie");
+        btnAccept.addEventListener("click", (event) => {
+            handler();
+        });
+    }
+
+    bindIdentificationLink(handler) {
+        const loginLink = document.getElementById("login");
+        loginLink.addEventListener("click", (event) => {
+            this.#executeHandler(
+                handler,
+                [],
+                "#body",
+                { action: "login" },
+                "#",
+                event,
+            );
+        });
+    }
+
+    bindLogin(handler) {
+        const form = document.forms.fLogin;
+        form.addEventListener("submit", (event) => {
+            handler(form.username.value, form.password.value);
+            event.preventDefault();
+        });
     }
 }
 

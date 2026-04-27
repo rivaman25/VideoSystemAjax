@@ -15,6 +15,7 @@ const historyActions = {
         VideoSystemApp.handleShowDeleteProductionForm(),
     updateProductionCast: (event) =>
         VideoSystemApp.handleShowUpdateProductionCastForm(),
+    login: (event) => VideoSystemApp.handleLoginForm()
 };
 
 /** Manejador para recuperar el estado de la página al navegar por el historial */
