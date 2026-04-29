@@ -21,4 +21,12 @@ function getCookie(cname) {
     return "";
 }
 
-export { setCookie, getCookie };
+// Cierra todos los modales abiertos
+function closeAllModals() {
+    document.querySelectorAll(".modal").forEach(modalEl => {
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+    });
+}
+
+export { setCookie, getCookie, closeAllModals };

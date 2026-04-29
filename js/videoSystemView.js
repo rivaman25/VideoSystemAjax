@@ -7,7 +7,7 @@ import { setCookie } from "./util.js";
 
 class VideoSystemView {
     #detailsWindows = new Map(); // Registra las ventanas que se abren
-    #loginModal;
+    #loginModal; // Modal de login
 
     constructor() {
         this.main = document.getElementsByTagName("main")[0];
@@ -572,6 +572,11 @@ class VideoSystemView {
         this.menu.append(menuOption);
     }
 
+    removeAdminMenu() {
+        const adminMenu = document.getElementById("adminMenu");
+        if (adminMenu) adminMenu.parentElement.remove();
+    }
+
     /** Muestra el formulario para crear una nueva producción */
     showNewProductionForm(directors, actors) {
         this.main.replaceChildren();
@@ -810,35 +815,37 @@ class VideoSystemView {
 
     /** Muestra un toast con el mensaje y color que se pasan por parámetro  */
     showToast(message, color) {
-        this.main.insertAdjacentHTML(
-            "beforeend",
-            `<div class="position-fixed top-50 start-50 translate-middle" style="z-index: 1055;">
-                <div
-                    id="liveToast"
-                    class="toast align-items-center text-bg-${color} border-0 mt-3 ms-1"
-                    role="alert"
-                    aria-live="assertive"
-                    aria-atomic="true"
-                >
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            ${message}
-                        </div>
-                        <button
-                            type="button"
-                            class="btn-close btn-close-white me-2 m-auto"
-                            data-bs-dismiss="toast"
-                            aria-label="Close"
-                        ></button>
-                    </div>
+        const wrapper = document.createElement("div");
+        wrapper.className = "position-fixed top-50 start-50 translate-middle";
+        wrapper.style.zIndex = "1055";
+
+        wrapper.innerHTML = `
+            <div class="toast align-items-center text-bg-${color} border-0 mt-3 ms-1"
+                role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button"
+                        class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast"></button>
                 </div>
-            </div>`,
+            </div>
+        `;
+
+        this.main.append(wrapper);
+
+        const toastEl = wrapper.querySelector(".toast");
+        const toast = new bootstrap.Toast(toastEl);
+
+        // Elimina el toast del DOM para evitar duplicados
+        toastEl.addEventListener(
+            "hidden.bs.toast",
+            () => {
+                wrapper.remove();
+            },
+            { once: true },
         );
 
-        const toastTrigger = document.getElementById("liveToast");
-        const toastBootstrap =
-            bootstrap.Toast.getOrCreateInstance(toastTrigger);
-        toastBootstrap.show();
+        toast.show();
     }
 
     showCookieConsent() {
@@ -891,8 +898,8 @@ class VideoSystemView {
     }
 
     removeIdentificationLink() {
-        const link = document.getElementById("login").closest("li");
-        link.remove();
+        const loginLink = document.getElementById("login");
+        if (loginLink) loginLink.closest("li").remove();
     }
 
     showLoginForm() {
@@ -932,19 +939,29 @@ class VideoSystemView {
         this.main.insertAdjacentHTML("afterbegin", login);
 
         const loginModalEle = document.getElementById("loginModal");
-        this.loginModal = new bootstrap.Modal(loginModalEle);
+        this.#loginModal = new bootstrap.Modal(loginModalEle);
 
         // Pone el foco en el primer input del modal
         loginModalEle.addEventListener("shown.bs.modal", () => {
             document.forms.fLogin.username.focus();
         });
 
+        // Elimina el modal del DOM cuando se cierra para evitar duplicar HTML
+        loginModalEle.addEventListener(
+            "hidden.bs.modal",
+            () => {
+                loginModalEle.remove();
+            },
+            { once: true }, // Solo se ejecuta una vez
+        );
+
         // Muestra el modal
-        this.loginModal.show();
+        this.#loginModal.show();
     }
 
+    /** Oculta el modal y lo elimna del árbol DOM */
     hideLoginForm() {
-        this.loginModal.hide();
+        this.#loginModal.hide();
     }
 
     showInvalidUserMessage() {
@@ -956,8 +973,30 @@ class VideoSystemView {
         document.forms.fLogin.username.focus();
     }
 
-    showGreetingLink() {
-        
+    showGreetingLink(username) {
+        const menuLogin = document.createElement("li");
+        menuLogin.classList.add("nav-item");
+        menuLogin.classList.add("dropdown");
+        menuLogin.insertAdjacentHTML(
+            "afterbegin",
+            `<a
+                id="greeting"
+                class="nav-link dropdown-toggle"
+                href="#greeting"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+            >Hola ${username}</a>
+            <ul class="dropdown-menu">
+                <li><a id="aCloseSession" class="dropdown-item" href="#disconnect">Desconectar</a></li>
+            </ul>`,
+        );
+        this.menu.append(menuLogin);
+    }
+
+    removeGreetingLink() {
+        const greetingMenu = document.getElementById("greeting");
+        if (greetingMenu) greetingMenu.parentElement.remove();
     }
 
     /** Manejador para apilar entradas en el objeto history */
@@ -1276,8 +1315,13 @@ class VideoSystemView {
         });
     }
 
-    bindGreetingLink(handler) {
-
+    bindCloseSession(handler) {
+        document
+            .getElementById("aCloseSession")
+            .addEventListener("click", (event) => {
+                handler();
+                event.preventDefault();
+            });
     }
 
     initHistory() {
@@ -1290,6 +1334,10 @@ class VideoSystemView {
 
     setUserCookie(user) {
         setCookie("activeUser", user.username, 1);
+    }
+
+    deleteUserCookie() {
+        setCookie("activeUser", "", 0);
     }
 }
 

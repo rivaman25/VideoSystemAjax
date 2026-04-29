@@ -1,4 +1,5 @@
 import VideoSystemApp from "./videoSystemApp.js";
+import { closeAllModals } from "./util.js";
 
 /** Acciones para recuperar el estado de la página */
 const historyActions = {
@@ -15,12 +16,13 @@ const historyActions = {
         VideoSystemApp.handleShowDeleteProductionForm(),
     updateProductionCast: (event) =>
         VideoSystemApp.handleShowUpdateProductionCastForm(),
-    login: (event) => VideoSystemApp.handleLoginForm()
+    login: (event) => VideoSystemApp.handleLoginForm(),
 };
 
 /** Manejador para recuperar el estado de la página al navegar por el historial */
 window.addEventListener("popstate", (event) => {
     if (event.state) {
+        closeAllModals(); // Cierras todos los modales para evitar problemas como la pantalla oscurecida
         historyActions[event.state.action](event);
     }
 });
