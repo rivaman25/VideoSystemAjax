@@ -5,7 +5,8 @@ import {
     InvalidValueException,
     AbstractClassException,
 } from "./baseExceptions.js";
-import { User } from "./objectsVideoSystem.js";
+
+import videoSystemModel from "./videoSystemModel.js";
 
 class AuthenticationServiceException extends BaseException {
     constructor(
@@ -24,16 +25,33 @@ const AuthenticationService = (function () {
     function init() {
         // Inicialización del Singleton
         class Authentication {
+            #model;
+
             constructor() {
                 if (!new.target) throw new InvalidAccessConstructorException();
+                this.model = videoSystemModel.getInstance();
             }
+
             validateUser(username, password) {
-                return !!(username === "admin" && password === "admin");
+                try {
+                    const user = this.model.createUser(username);
+                    return user.password === password;
+                } catch (error) {
+                    return false;
+                }
+                // return !!(username === "admin" && password === "admin");
             }
+
             getUser(username) {
-                let user = null;
-                if (username === "admin") user = new User("admin");
-                return user;
+                try {
+                    const user = this.model.createUser(username);
+                    return user;
+                } catch (error) {
+                    return null;
+                }
+                // let user = null;
+                // if (username === "admin") user = new User("admin");
+                // return user;
             }
         }
 

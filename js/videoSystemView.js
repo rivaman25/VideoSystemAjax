@@ -3,9 +3,11 @@ import {
     deleteProductionValidation,
     updateProductionCastValidation,
 } from "./validation.js";
+import { setCookie } from "./util.js";
 
 class VideoSystemView {
     #detailsWindows = new Map(); // Registra las ventanas que se abren
+    #loginModal;
 
     constructor() {
         this.main = document.getElementsByTagName("main")[0];
@@ -834,8 +836,9 @@ class VideoSystemView {
         );
 
         const toastTrigger = document.getElementById("liveToast");
-        this.toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastTrigger);
-        this.toastBootstrap.show();
+        const toastBootstrap =
+            bootstrap.Toast.getOrCreateInstance(toastTrigger);
+        toastBootstrap.show();
     }
 
     showCookieConsent() {
@@ -850,7 +853,7 @@ class VideoSystemView {
                     aria-atomic="true"
                     data-bs-autohide="false"
                 >
-                    <div class="toast-header">
+                    <div class="toast-header text-bg-info">
                         <h4 class="me-auto">Aviso de uso de cookies</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="toast" 
                             aria-label="Close" id="btnDismissCookie"></button>
@@ -867,8 +870,9 @@ class VideoSystemView {
             </div>`,
         );
         const toastTrigger = document.getElementById("cookieToast");
-        this.toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastTrigger);
-        this.toastBootstrap.show();
+        const toastBootstrap =
+            bootstrap.Toast.getOrCreateInstance(toastTrigger);
+        toastBootstrap.show();
     }
 
     showIdentificationLink() {
@@ -886,33 +890,75 @@ class VideoSystemView {
         this.menu.append(menuLogin);
     }
 
-    showLogin() {
-        this.main.replaceChildren();
-        const login = `
-            <div class="card mt-3 mx-auto" style="max-width: 400px;">
-                <div class="card-body">
-                    <h3 class="card-title">Login</h3>
-                    <form name="fLogin" role="form" novalidate>
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Usuario</label>
-                            <input type="text" class="form-control" id="username" name="username" aria-describedby="username">
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="password" name="password">
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                            <label class="form-check-label" for="remember">Recuérdame</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Acceder</button>
-                    </form>
-                </div>
-            </div>`;
-        this.main.insertAdjacentHTML("afterbegin", login);
+    removeIdentificationLink() {
+        const link = document.getElementById("login").closest("li");
+        link.remove();
     }
 
-    showDisconectMenu() {}
+    showLoginForm() {
+        const login = `
+            <div class="modal fade" id="loginModal" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" 
+                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Login</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="fLogin" name="fLogin" role="form" novalidate>
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Usuario</label>
+                                    <input type="text" class="form-control" id="username" name="username" aria-describedby="username">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Contraseña</label>
+                                    <input type="password" class="form-control" id="password" name="password">
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                                    <label class="form-check-label" for="remember">Recuérdame</label>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" form="fLogin" class="btn btn-primary">Acceder</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+        this.main.insertAdjacentHTML("afterbegin", login);
+
+        const loginModalEle = document.getElementById("loginModal");
+        this.loginModal = new bootstrap.Modal(loginModalEle);
+
+        // Pone el foco en el primer input del modal
+        loginModalEle.addEventListener("shown.bs.modal", () => {
+            document.forms.fLogin.username.focus();
+        });
+
+        // Muestra el modal
+        this.loginModal.show();
+    }
+
+    hideLoginForm() {
+        this.loginModal.hide();
+    }
+
+    showInvalidUserMessage() {
+        this.showToast(
+            "El usuario o la contraseña no son válidos. Inténtalo nuevamente.",
+            "warning",
+        );
+        document.forms.fLogin.reset();
+        document.forms.fLogin.username.focus();
+    }
+
+    showGreetingLink() {
+        
+    }
 
     /** Manejador para apilar entradas en el objeto history */
     #executeHandler(
@@ -1218,12 +1264,32 @@ class VideoSystemView {
         });
     }
 
-    bindLogin(handler) {
+    bindLoginForm(handler) {
         const form = document.forms.fLogin;
         form.addEventListener("submit", (event) => {
-            handler(form.username.value, form.password.value);
+            handler(
+                form.username.value,
+                form.password.value,
+                form.remember.checked,
+            );
             event.preventDefault();
         });
+    }
+
+    bindGreetingLink(handler) {
+
+    }
+
+    initHistory() {
+        history.replaceState({ action: "init" }, null);
+    }
+
+    setCookiesConsent() {
+        setCookie("cookiesConsent", "true", 1);
+    }
+
+    setUserCookie(user) {
+        setCookie("activeUser", user.username, 1);
     }
 }
 

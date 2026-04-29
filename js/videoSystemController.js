@@ -1,4 +1,4 @@
-import { setCookie, getCookie } from "./util.js";
+import { getCookie } from "./util.js";
 
 class VideoSystemController {
     #model;
@@ -21,6 +21,7 @@ class VideoSystemController {
             this.#view.showCookieConsent();
             this.#view.bindShowCookieConsent(this.handleCookieConsent);
         }
+
         this.#LoadObjects();
         this.onAddCategory();
         this.onAddActor();
@@ -35,6 +36,48 @@ class VideoSystemController {
         );
         this.#view.bindShowProduction(this.handleShowProduction);
         this.#view.bindCloseDetails(this.handleCloseDetails);
+
+        // Comprueba si el usuario ha iniciado sesión
+        const userCookie = getCookie("activeUser");
+        if (userCookie) {
+            const user = this.#auth.getUser(userCookie);
+            if (user) {
+                this.#user = user;
+                this.onOpenSession();
+                return;
+            }
+        }
+
+        // Si no ha iniciado sesión o no existe el usuario muestra el enlace de login
+        this.#view.showIdentificationLink();
+        this.#view.bindIdentificationLink(this.handleLoginForm);
+    }
+
+    handleCookieConsent = () => {
+        this.#view.setCookiesConsent();
+    };
+
+    handleLoginForm = () => {
+        this.#view.showLoginForm();
+        this.#view.bindLoginForm(this.handleLogin);
+    };
+
+    handleLogin = (username, password, remember) => {
+        if (this.#auth.validateUser(username, password)) {
+            this.#user = this.#auth.getUser(username);
+            if (remember) {
+                this.#view.setUserCookie(this.#user);
+            }
+            this.#view.hideLoginForm();
+            this.#view.removeIdentificationLink();
+            this.#view.initHistory();
+            this.onOpenSession();
+        } else {
+            this.#view.showInvalidUserMessage();
+        }
+    };
+
+    onOpenSession = () => {
         // Crea del menú Administración
         this.#view.showAdminMenu();
         // bind para lanzar el formulario de nueva producción, se invoca después de crear el menú Administración
@@ -47,31 +90,25 @@ class VideoSystemController {
         this.#view.bindShowUpdateProductionCastForm(
             this.handleShowUpdateProductionCastForm,
         );
-        // Comprueba si el usuario ha iniciado sesión
-        if (getCookie("activeUser")) {
-        } else {
-            this.#view.showIdentificationLink();
-            this.#view.bindIdentificationLink(this.handleLoginForm);
-        }
+        this.#view.showGreetingLink(this.#user.username);
+        // bind para cerrar sesión al seleccionar desconectar
+        this.#view.bindCloseSession(this.handleCloseSession);
+    };
+
+    handleCloseSession = () => {
+        this.onCloseSession();
+        this.onInit();
+        this.#view.initHistory();
+    };
+
+    onCloseSession() {
+        this.#user = null;
+        this.#view.deleteUserCookie();
+        this.#view.removeGreetingLink();
+        this.#view.showIdentificationLink();
+        this.#view.bindIdentificationLink(this.handleLoginForm);
+        this.#view.removeAdminMenu();
     }
-
-    handleCookieConsent = () => {
-        setCookie("cookiesConsent", "true");
-    };
-
-    handleLoginForm = () => {
-        this.#view.showLogin();
-        this.#view.bindLogin(this.handleLogin);
-    };
-
-    handleLogin = (username, password) => {
-        if (this.#auth.validateUser(username, password)) {
-            this.#user = this.#auth.getUser(username);
-            // this.onOpenSession();
-        } else {
-            this.#view.showInvalidUserMessage();
-        }
-    };
 
     /** Método privado para instanciar los objetos */
     #LoadObjects() {
@@ -731,6 +768,16 @@ class VideoSystemController {
 
     /** Muestra el formulario para crear una producción */
     handleShowNewProductionForm = () => {
+        // Gestión de la seguridad, evita que se pueda crear
+        // una producción si el usuario no está autenticado
+        if (!this.#user) {
+            this.#view.showToast(
+                "Para realizar esta acción es necesario estar autenticado.",
+                "danger",
+            );
+            return;
+        }
+
         this.#view.showNewProductionForm(
             this.#model.directors,
             this.#model.actors,
@@ -750,6 +797,16 @@ class VideoSystemController {
         directors,
         actors,
     ) => {
+        // Gestión de la seguridad, evita que se pueda crear
+        // una producción si el usuario no está autenticado
+        if (!this.#user) {
+            this.#view.showToast(
+                "Para realizar esta acción es necesario estar autenticado.",
+                "danger",
+            );
+            return;
+        }
+
         try {
             const publicationDate = new Date(publication);
             publication = publicationDate.toLocaleDateString("es-ES");
@@ -799,12 +856,32 @@ class VideoSystemController {
 
     /** Muestra el formulario para eliminar una producción */
     handleShowDeleteProductionForm = () => {
+        // Gestión de la seguridad, evita que se pueda eliminar
+        // una producción si el usuario no está autenticado
+        if (!this.#user) {
+            this.#view.showToast(
+                "Para realizar esta acción es necesario estar autenticado.",
+                "danger",
+            );
+            return;
+        }
+
         this.#view.showDeleteProductionForm(this.#model.productions);
         this.#view.bindDeleteProductionValidation(this.handleDeleteProduction);
     };
 
     // Elimina un producción
     handleDeleteProduction = (title) => {
+        // Gestión de la seguridad, evita que se pueda eliminar
+        // una producción si el usuario no está autenticado
+        if (!this.#user) {
+            this.#view.showToast(
+                "Para realizar esta acción es necesario estar autenticado.",
+                "danger",
+            );
+            return;
+        }
+
         const production = this.#model.createProduction("", title);
 
         try {
@@ -826,6 +903,16 @@ class VideoSystemController {
 
     /** Muestra el formulario para actualizar los directores y actores de una producción */
     handleShowUpdateProductionCastForm = () => {
+        // Gestión de la seguridad, evita que se pueda actualizar
+        // una producción si el usuario no está autenticado
+        if (!this.#user) {
+            this.#view.showToast(
+                "Para realizar esta acción es necesario estar autenticado.",
+                "danger",
+            );
+            return;
+        }
+
         this.#view.showUpdateProductionCastForm(
             this.#model.productions,
             this.#model.directors,
@@ -859,6 +946,16 @@ class VideoSystemController {
 
     /** Actualiza los actores y directores de la producción */
     handleUpdateProductionCast = (title, directors, actors) => {
+        // Gestión de la seguridad, evita que se pueda actualizar
+        // una producción si el usuario no está autenticado
+        if (!this.#user) {
+            this.#view.showToast(
+                "Para realizar esta acción es necesario estar autenticado.",
+                "danger",
+            );
+            return;
+        }
+
         const production = this.#model.createProduction("", title);
 
         try {
