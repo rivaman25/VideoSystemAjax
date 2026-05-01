@@ -70,6 +70,7 @@ class VideoSystemController {
             }
             this.#view.hideLoginForm();
             this.#view.removeIdentificationLink();
+            this.onInit();
             this.#view.initHistory();
             this.onOpenSession();
         } else {
@@ -78,6 +79,9 @@ class VideoSystemController {
     };
 
     onOpenSession = () => {
+        // Crea el link en el menú de producciones favoritas
+        this.#view.showFavoritesLink();
+        this.#view.bindFavoritesLink(this.handleFavoritesLink);
         // Crea del menú Administración
         this.#view.showAdminMenu();
         // bind para lanzar el formulario de nueva producción, se invoca después de crear el menú Administración
@@ -95,6 +99,41 @@ class VideoSystemController {
         this.#view.bindCloseSession(this.handleCloseSession);
     };
 
+    handleFavoritesLink = () => {
+        // Solo se muetran los favoritos si el usuario ha iniciado sesión.
+        if (!this.#user) {
+            this.#view.showToast(
+                "Para ver las producciones favoritas es necesario estar autenticado.",
+                "danger",
+            );
+            return;
+        }
+        const favProductions = new Map(); // Producciones favoritas
+
+        for (let i = 0, key; i < localStorage.length; i++) {
+            key = localStorage.key(i);
+            const result = this.#model.findProductions(
+                (elem, index, productions) => (elem.title === key),
+            );
+            if (result) {
+                for (const production of result) {
+                    // Añadir la producción sin repetir al mapa
+                    favProductions.set(key, production);
+                }
+            } else {
+                // La producción no existe, se elimina de la lista de favoritos
+                localStorage.removeItem(key);
+            }
+        }
+
+        this.#view.clearMain();
+        this.#view.showProductions(
+            favProductions.values(),
+            "Películas y series favoritas",
+        );
+        this.#view.bindShowProduction(this.handleShowProduction);
+    };
+
     handleCloseSession = () => {
         this.onCloseSession();
         this.onInit();
@@ -104,6 +143,7 @@ class VideoSystemController {
     onCloseSession() {
         this.#user = null;
         this.#view.deleteUserCookie();
+        this.#view.removeFavoritesLink();
         this.#view.removeGreetingLink();
         this.#view.showIdentificationLink();
         this.#view.bindIdentificationLink(this.handleLoginForm);
@@ -691,12 +731,35 @@ class VideoSystemController {
         }
         const directors = this.#model.getDirectorsProduction(production);
         const actors = this.#model.getCast(production);
-        this.#view.showProduction(production, directors, actors);
-        // Enlace de los directores
+        // Indica si el usuario ha iniciado sesión para mostra el botón favoritos
+        const authenticated = this.#user ? true : false;
+        const favorite = localStorage.getItem(title) ? true : false;
+        this.#view.showProduction(
+            production,
+            directors,
+            actors,
+            authenticated,
+            favorite,
+        );
+        // Enlaces de los directores y actores
         this.#view.bindShowDirector(this.handleShowDirector);
         this.#view.bindShowActor(this.handleShowActor);
         // Enlace para mostrar la ficha en una nueva ventana
         this.#view.bindShowDetails(this.handleShowDetails);
+        // Enlace para añadir o eliminar la producción de favoritos
+        if (this.#user) {
+            this.#view.bindToggleFavorite(this.handleToggleFavorite);
+        }
+    };
+
+    /** Añade o elimina la producción de la lista de favoritos */
+    handleToggleFavorite = (production) => {
+        const productionFav = localStorage.getItem(production);
+        if (productionFav) {
+            this.#view.deleteFavoriteProduction(production);
+        } else {
+            this.#view.setFavoriteProduction(production);
+        }
     };
 
     handleShowDirector = (nameDirector) => {
@@ -772,7 +835,7 @@ class VideoSystemController {
         // una producción si el usuario no está autenticado
         if (!this.#user) {
             this.#view.showToast(
-                "Para realizar esta acción es necesario estar autenticado.",
+                "Para crear una producción es necesario estar autenticado.",
                 "danger",
             );
             return;
@@ -801,7 +864,7 @@ class VideoSystemController {
         // una producción si el usuario no está autenticado
         if (!this.#user) {
             this.#view.showToast(
-                "Para realizar esta acción es necesario estar autenticado.",
+                "Para crear una producción es necesario estar autenticado.",
                 "danger",
             );
             return;
@@ -860,7 +923,7 @@ class VideoSystemController {
         // una producción si el usuario no está autenticado
         if (!this.#user) {
             this.#view.showToast(
-                "Para realizar esta acción es necesario estar autenticado.",
+                "Para eliminar una producción es necesario estar autenticado.",
                 "danger",
             );
             return;
@@ -876,7 +939,7 @@ class VideoSystemController {
         // una producción si el usuario no está autenticado
         if (!this.#user) {
             this.#view.showToast(
-                "Para realizar esta acción es necesario estar autenticado.",
+                "Para eliminar una producción es necesario estar autenticado.",
                 "danger",
             );
             return;
@@ -907,7 +970,7 @@ class VideoSystemController {
         // una producción si el usuario no está autenticado
         if (!this.#user) {
             this.#view.showToast(
-                "Para realizar esta acción es necesario estar autenticado.",
+                "Para actualizar una producción necesario estar autenticado.",
                 "danger",
             );
             return;
@@ -950,7 +1013,7 @@ class VideoSystemController {
         // una producción si el usuario no está autenticado
         if (!this.#user) {
             this.#view.showToast(
-                "Para realizar esta acción es necesario estar autenticado.",
+                "Para actualizar una producción es necesario estar autenticado.",
                 "danger",
             );
             return;

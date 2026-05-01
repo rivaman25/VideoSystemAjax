@@ -170,7 +170,7 @@ class VideoSystemView {
     }
 
     /** Muestra una producción con todos sus campos, así como sus directores y actores */
-    showProduction(production, directors, actors) {
+    showProduction(production, directors, actors, authenticated, favorite) {
         const directorsList = [];
         for (const director of directors) {
             directorsList.push(`<a href="#" data-director="${director.name}${director.lastname1}" 
@@ -184,6 +184,19 @@ class VideoSystemView {
             class="text-decoration-none">${actor.name} ${actor.lastname1}</a>`);
         }
         let actorsText = actorsList.join(", ");
+
+        // Si el usuario ha iniciado sesión muestra el botón favorito
+        let favButtonHTML = "";
+        if (authenticated) {
+            // La apariencia cambián en función de si es favorita o no
+            favButtonHTML = favorite
+                ? `<button class="btn btn-warning favorite-btn" data-production="${production.title}">
+                        <i class="bi bi-star"></i> Favorito
+                    </button>`
+                : `<button class="btn btn-outline-warning favorite-btn" data-production="${production.title}">
+                        <i class="bi bi-star-fill"></i> Favorito
+                    </button>`;
+        }
 
         this.main.replaceChildren();
         this.main.insertAdjacentHTML(
@@ -225,6 +238,7 @@ class VideoSystemView {
                                 <div class="text-center">
                                     <button class="btn btn-primary btn-details" data-type="Producción"
                                     data-key="production-${production.title}">Mostrar</button>
+                                    ${favButtonHTML}
                                 </div>
                             </div>
                         </div>
@@ -882,6 +896,26 @@ class VideoSystemView {
         toastBootstrap.show();
     }
 
+    showFavoritesLink() {
+        const favoritesLink = document.createElement("li");
+        favoritesLink.classList.add("nav-item");
+        favoritesLink.insertAdjacentHTML(
+            "afterbegin",
+            `<a
+                id="favorites-link"
+                class="nav-link"
+                aria-current="page"
+                href="#favorites"
+            >Producciones favoritas</a>`,
+        );
+        this.menu.append(favoritesLink);
+    }
+
+    removeFavoritesLink() {
+        const aFavorites = document.getElementById("favorites-link");
+        aFavorites.parentElement.remove();
+    }
+
     showIdentificationLink() {
         const menuLogin = document.createElement("li");
         menuLogin.classList.add("nav-item");
@@ -1201,6 +1235,21 @@ class VideoSystemView {
         });
     }
 
+    bindToggleFavorite(handler) {
+        const favBtn = document.querySelector(".favorite-btn");
+        favBtn.addEventListener("click", (event) => {
+            const icon = favBtn.querySelector("i");
+
+            icon.classList.toggle("bi-star");
+            icon.classList.toggle("bi-star-fill");
+
+            favBtn.classList.toggle("btn-outline-warning");
+            favBtn.classList.toggle("btn-warning");
+
+            handler(favBtn.dataset.production);
+        });
+    }
+
     /** Enlaza el manejador para cerrar todas las ventanas abiertas */
     bindCloseDetails(handler) {
         const link = document.querySelector(
@@ -1324,12 +1373,26 @@ class VideoSystemView {
             });
     }
 
+    bindFavoritesLink(handler) {
+        const favoritesLink = document.getElementById("favorites-link");
+        favoritesLink.addEventListener("click", (event) => {
+            this.#executeHandler(
+                handler,
+                [],
+                "#body",
+                { action: "showFavorites" },
+                "#",
+                event,
+            );
+        });
+    }
+
     initHistory() {
         history.replaceState({ action: "init" }, null);
     }
 
     setCookiesConsent() {
-        setCookie("cookiesConsent", "true", 1);
+        setCookie("cookiesConsent", "true", 180);
     }
 
     setUserCookie(user) {
@@ -1338,6 +1401,14 @@ class VideoSystemView {
 
     deleteUserCookie() {
         setCookie("activeUser", "", 0);
+    }
+
+    setFavoriteProduction(production) {
+        localStorage.setItem(production, "favorite");
+    }
+
+    deleteFavoriteProduction(production) {
+        localStorage.removeItem(production);
     }
 }
 

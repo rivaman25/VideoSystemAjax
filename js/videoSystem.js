@@ -17,6 +17,7 @@ const historyActions = {
     updateProductionCast: (event) =>
         VideoSystemApp.handleShowUpdateProductionCastForm(),
     login: (event) => VideoSystemApp.handleLoginForm(),
+    showFavorites: (event) => VideoSystemApp.handleFavoritesLink(),
 };
 
 /** Manejador para recuperar el estado de la página al navegar por el historial */
