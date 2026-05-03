@@ -8,11 +8,15 @@
     ],
     "categories": [
         {
+            "name": "Default",
+            "description": "Default category",
+            "productions": []
+        },
+        {
             "name": "Acción",
             "description": "Películas y series de acción",
             "productions": [
                 "Terminator",
-                "Tesis",
                 "Alien, el octavo pasajero",
                 "John Wick"
             ]
@@ -24,7 +28,8 @@
                 "Titanic",
                 "Perdidos (Lost)",
                 "Forrest Gump",
-                "Mystic River"
+                "Mystic River",
+                "Mar adentro"
             ]
         },
         {
@@ -40,7 +45,6 @@
     ],
     "productions": [
         {
-            "type": "Movie",
             "title": "Terminator",
             "publication": "26/10/1984",
             "nationality": "EEUU",
@@ -48,15 +52,6 @@
             "image": "../images/the_terminator.jpg"
         },
         {
-            "type": "Movie",
-            "title": "Tesis",
-            "publication": "12/04/1996",
-            "nationality": "España",
-            "synopsis": "Ángela, estudiante de Imagen, está preparando una tesis sobre la violencia audiovisual. Como complemento a su trabajo, su director de tesis se compromete a buscar en la videoteca de la facultad material para ella, pero al día siguiente es hallado muerto. Ángela conoce a Chema, un compañero experto en cine gore y pornográfico, y a Bosco, un extraño chico, amigo íntimo de una joven asesinada en una snuff movie.",
-            "image": "../images/tesis.jpg"
-        },
-        {
-            "type": "Movie",
             "title": "Alien, el octavo pasajero",
             "publication": "31/10/1979",
             "nationality": "USA",
@@ -64,7 +59,6 @@
             "image": "../images/alien.jpg"
         },
         {
-            "type": "Movie",
             "title": "John Wick",
             "publication": "24/10/2014",
             "nationality": "USA",
@@ -72,7 +66,6 @@
             "image": "../images/john_wick.jpg"
         },
         {
-            "type": "Movie",
             "title": "Titanic",
             "publication": "19/12/1997",
             "nationality": "EEUU",
@@ -80,18 +73,13 @@
             "image": "../images/titanic.jpg"
         },
         {
-            "type": "Serie",
             "title": "Perdidos (Lost)",
             "publication": "22/09/2004",
             "nationality": "EEUU",
             "synopsis": "Serie de TV (2004-2010). 6 temporadas. 121 episodios. Historia de un variopinto grupo de supervivientes de un accidente de aviación en una remota isla del Pacífico aparentemente desierta, una isla en la que suceden cosas muy extrañas. Luchando por la supervivencia, casi medio centenar de personas mostrarán lo mejor y lo peor de sí mismas.",
-            "image": "../images/lost.jpg",
-            "resources": null,
-            "locations": null,
-            "seasons": 6
+            "image": "../images/lost.jpg"
         },
         {
-            "type": "Movie",
             "title": "Forrest Gump",
             "publication": "01/07/1994",
             "nationality": "USA",
@@ -99,7 +87,6 @@
             "image": "../images/forrest_gump.jpg"
         },
         {
-            "type": "Movie",
             "title": "Mystic River",
             "publication": "03/10/2003",
             "nationality": "EEUU",
@@ -107,18 +94,13 @@
             "image": "../images/mystic_river.jpg"
         },
         {
-            "type": "Serie",
             "title": "The Big Bang Theory",
             "publication": "24/07/2007",
             "nationality": "EEUU",
             "synopsis": "Serie de TV (2007-2019). 12 temporadas. 280 episodios. Leonard (Johnny Galecki) y Sheldon (Jim Parsons) son dos cerebros privilegiados que comparten piso. Aunque los dos, doctores en Física, son capaces de calcular las probabilidades de existencia de otros mundos, no saben cómo relacionarse con los demás, especialmente con las chicas. Penny (Kaley Cuoco), una vecina recién llegada, es el polo opuesto a los dos amigos, de modo que su llegada altera la tranquila vida sentimental de Leonard y el desorden obsesivo-compulsivo de Sheldon.",
-            "image": "./images/the_big_bang_theory.jpg",
-            "resources": null,
-            "locations": null,
-            "seasons": 12
+            "image": "./images/the_big_bang_theory.jpg"
         },
         {
-            "type": "Movie",
             "title": "Torrente, el brazo tonto de la ley",
             "publication": "13/03/1998",
             "nationality": "España",
@@ -126,7 +108,6 @@
             "image": "../images/torrente_el_brazo_tonto_de_la_ley.jpg"
         },
         {
-            "type": "Movie",
             "title": "Intocable",
             "publication": "09/03/2012",
             "nationality": "Francia",
@@ -134,183 +115,21 @@
             "image": "../images/intouchables.jpg"
         },
         {
-            "type": "Movie",
             "title": "Padre no hay más que uno",
             "publication": "01/08/2019",
             "nationality": "España",
             "synopsis": "Javier tendrá que enfrentarse a la realidad que supone bregar con cinco hijos cuando su mujer decide irse de viaje y dejarle solo con ellos.",
             "image": "../images/padre_no_hay_mas_que_uno.jpg"
+        },
+        {
+            "title": "Mar adentro",
+            "publication": "03/06/2015",
+            "nationality": "España",
+            "synopsis": "Película dramática",
+            "image": "blob:http://localhost:8000/1c720102-3e22-4c2a-b540-6b1f12a9800e"
         }
     ],
     "people": [
-        {
-            "role": "actor",
-            "firstName": "Arnold",
-            "lastName": "Schwarzenegger",
-            "born": "30/07/1947",
-            "image": "../images/arnold_schwarzenegger.jpg"
-        },
-        {
-            "role": "actor",
-            "firstName": "Linda",
-            "lastName": "Hamilton",
-            "born": "26/09/1956",
-            "image": "../images/linda_hamilton.jpg"
-        },
-        {
-            "role": "actor",
-            "firstName": "Eduardo",
-            "lastName": "Noriega",
-            "born": "01/08/1973",
-            "image": "../images/eduardo_noriega.jpg"
-        },
-        {
-            "role": "actor",
-            "firstName": "Ana",
-            "lastName": "Torrent",
-            "born": "12/07/1966",
-            "image": "../images/ana_torrent.jpg"
-        },
-        {
-            "role": "actor",
-            "firstName": "Sigourney",
-            "lastName": "Weaver",
-            "born": "08/10/1949",
-            "image": "../images/sigourney_weaver.jpg"
-        },
-        {
-            "role": "actor",
-            "firstName": "John",
-            "lastName": "Hurt",
-            "born": "22/01/1940",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Keanu",
-            "lastName": "Reeves",
-            "born": "02/09/1964",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Michael",
-            "lastName": "Nyqvist",
-            "born": "08/11/1960",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Leonardo",
-            "lastName": "DiCarpio",
-            "born": "11/11/1974",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Kate",
-            "lastName": "Winslet",
-            "born": "05/10/1975",
-            "image": "../images/actress.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Matthew",
-            "lastName": "Fox",
-            "born": "14/07/1966",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Evangeline",
-            "lastName": "Lilly",
-            "born": "03/08/1979",
-            "image": "../images/actress.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Tom",
-            "lastName": "Hanks",
-            "born": "09/07/1956",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Robin",
-            "lastName": "Wright",
-            "born": "08/04/1966",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Sean",
-            "lastName": "Penn",
-            "born": "17/08/1960",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Tim",
-            "lastName": "Robbins",
-            "born": "16/10/1958",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Johnny",
-            "lastName": "Galecki",
-            "born": "30/04/1975",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Jim",
-            "lastName": "Parsons",
-            "born": "24/03/1973",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Javier",
-            "lastName": "Cámara",
-            "born": "19/01/1967",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Neus",
-            "lastName": "Asensi",
-            "born": "04/08/1965",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "François",
-            "lastName": "Cluzet",
-            "born": "21/09/1955",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Omar",
-            "lastName": "Sy",
-            "born": "20/01/1978",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Toni",
-            "lastName": "Acosta",
-            "born": "10/04/1972",
-            "image": "../images/actor.png"
-        },
-        {
-            "role": "actor",
-            "firstName": "Leo",
-            "lastName": "Harlem",
-            "born": "16/11/1962",
-            "image": "../images/actor.png"
-        },
         {
             "role": "director",
             "firstName": "James",
@@ -380,68 +199,273 @@
             "lastName": "Nakache",
             "born": "15/04/1973",
             "image": "../images/olivier_nakache.jpg"
+        },
+        {
+            "role": "actor",
+            "firstName": "Arnold",
+            "born": "30/07/1947",
+            "image": "../images/arnold_schwarzenegger.jpg"
+        },
+        {
+            "role": "actor",
+            "firstName": "Linda",
+            "born": "26/09/1956",
+            "image": "../images/linda_hamilton.jpg"
+        },
+        {
+            "role": "actor",
+            "firstName": "Eduardo",
+            "born": "01/08/1973",
+            "image": "../images/eduardo_noriega.jpg"
+        },
+        {
+            "role": "actor",
+            "firstName": "Ana",
+            "born": "12/07/1966",
+            "image": "../images/ana_torrent.jpg"
+        },
+        {
+            "role": "actor",
+            "firstName": "Sigourney",
+            "born": "08/10/1949",
+            "image": "../images/sigourney_weaver.jpg"
+        },
+        {
+            "role": "actor",
+            "firstName": "John",
+            "born": "22/01/1940",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Keanu",
+            "born": "02/09/1964",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Michael",
+            "born": "08/11/1960",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Leonardo",
+            "born": "11/11/1974",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Kate",
+            "born": "05/10/1975",
+            "image": "../images/actress.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Matthew",
+            "born": "14/07/1966",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Evangeline",
+            "born": "03/08/1979",
+            "image": "../images/actress.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Tom",
+            "born": "09/07/1956",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Robin",
+            "born": "08/04/1966",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Sean",
+            "born": "17/08/1960",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Tim",
+            "born": "16/10/1958",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Johnny",
+            "born": "30/04/1975",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Jim",
+            "born": "24/03/1973",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Javier",
+            "born": "19/01/1967",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Neus",
+            "born": "04/08/1965",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "François",
+            "born": "21/09/1955",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Omar",
+            "born": "20/01/1978",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Toni",
+            "born": "10/04/1972",
+            "image": "../images/actor.png"
+        },
+        {
+            "role": "actor",
+            "firstName": "Leo",
+            "born": "16/11/1962",
+            "image": "../images/actor.png"
         }
     ],
     "assignments": [
         {
             "production": "Terminator",
-            "actors": ["Arnold Schwarzenegger", "Linda Hamilton"],
-            "director": "James Cameron"
-        },
-        {
-            "production": "Tesis",
-            "actors": ["Eduardo Noriega", "Ana Torrent"],
-            "director": "Alejandro Amenabar"
+            "actors": [
+                "Arnold undefined",
+                "Linda undefined",
+                "Eduardo undefined"
+            ],
+            "directors": [
+                "James undefined"
+            ]
         },
         {
             "production": "Alien, el octavo pasajero",
-            "actors": ["Sigourney Weaver", "John Hurt"],
-            "director": "Ridley Scott"
+            "actors": [
+                "Sigourney undefined",
+                "John undefined"
+            ],
+            "directors": [
+                "Ridley undefined"
+            ]
         },
         {
             "production": "John Wick",
-            "actors": ["Keanu Reeves", "Michael Nyqvist"],
-            "director": "Chad Stahelski"
+            "actors": [
+                "Keanu undefined",
+                "Michael undefined"
+            ],
+            "directors": [
+                "Chad undefined"
+            ]
         },
         {
             "production": "Titanic",
-            "actors": ["Leonardo DiCarpio", "Kate Winslet"],
-            "director": "James Cameron"
+            "actors": [
+                "Leonardo undefined",
+                "Kate undefined"
+            ],
+            "directors": [
+                "James undefined"
+            ]
         },
         {
             "production": "Perdidos (Lost)",
-            "actors": ["Matthew Fox", "Evangeline Lilly"],
-            "director": "J.J. Abrams"
+            "actors": [
+                "Matthew undefined",
+                "Evangeline undefined"
+            ],
+            "directors": [
+                "J.J. undefined"
+            ]
         },
         {
             "production": "Forrest Gump",
-            "actors": ["Tom Hanks", "Robin Wright"],
-            "director": "Robert Zemeckis"
+            "actors": [
+                "Tom undefined",
+                "Robin undefined"
+            ],
+            "directors": [
+                "Robert undefined"
+            ]
         },
         {
             "production": "Mystic River",
-            "actors": ["Sean Penn", "Tim Robbins"],
-            "director": "Clint Eastwood"
+            "actors": [
+                "Sean undefined",
+                "Tim undefined"
+            ],
+            "directors": [
+                "Clint undefined"
+            ]
         },
         {
             "production": "The Big Bang Theory",
-            "actors": ["Johnny Galecki", "Jim Parsons"],
-            "director": "Chuck Lorre"
+            "actors": [
+                "Johnny undefined",
+                "Jim undefined"
+            ],
+            "directors": [
+                "Chuck undefined"
+            ]
         },
         {
             "production": "Torrente, el brazo tonto de la ley",
-            "actors": ["Javier Cámara", "Neus Asensi"],
-            "director": "Santiago Segura"
+            "actors": [
+                "Javier undefined",
+                "Neus undefined"
+            ],
+            "directors": [
+                "Santiago undefined"
+            ]
         },
         {
             "production": "Intocable",
-            "actors": ["François Cluzet", "Omar Sy"],
-            "director": "Oliver Nakache"
+            "actors": [
+                "François undefined",
+                "Omar undefined"
+            ],
+            "directors": [
+                "Oliver undefined"
+            ]
         },
         {
             "production": "Padre no hay más que uno",
-            "actors": ["Toni Acosta", "Leo Harlem"],
-            "director": "Santiago Segura"
+            "actors": [
+                "Toni undefined",
+                "Leo undefined"
+            ],
+            "directors": [
+                "Santiago undefined"
+            ]
+        },
+        {
+            "production": "Mar adentro",
+            "actors": [
+                "Omar undefined",
+                "Toni undefined"
+            ],
+            "directors": [
+                "Alejandro undefined"
+            ]
         }
     ]
 }

@@ -411,9 +411,9 @@ class Serie extends Production {
         nationality,
         synopsis,
         image,
-        seasons = 0,
         resources = [],
         locations = [],
+        seasons = 0,
     ) {
         // Valida si la función se invoca con el operador new
         if (!new.target) throw new InvalidAccessConstructorException();

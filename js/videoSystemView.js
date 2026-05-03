@@ -235,6 +235,9 @@ class VideoSystemView {
                                 <p class="card-text">
                                     <span class="text-primary-emphasis">Sinopsis:</span> ${production.synopsis}
                                 </p>
+                                <div class="col-md-6 mb-2">
+                                    <div class="m-0" id="mapid"></div>
+                                </div>
                                 <div class="text-center">
                                     <button class="btn btn-primary btn-details" data-type="Producción"
                                     data-key="production-${production.title}">Mostrar</button>
@@ -246,6 +249,33 @@ class VideoSystemView {
                 </div>
             </div>`,
         );
+
+        const mapContainer = document.getElementById("mapid");
+        mapContainer.style.height = "200px";
+        mapContainer.style.border = "1px solid black";
+
+        let latitude = 38.990831799999995;
+        let longitude = -3.9206173000000004;
+        if (production.locations && production.locations.length > 0) {
+            latitude = production.locations[0].latitude;
+            longitude = production.locations[0].longitude;
+        }
+
+        // El mapa se ubicará según las coordenadas y tendrá el zoom indicado en el segundo argumento
+        let map = L.map("mapid").setView([latitude, longitude], 4);
+
+        // Utilizamos OpenStreetMap para mostrar el mapa
+        L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: `Map data &copy; 
+                <a href="http://openstreetmap.org">OpenStreetMap</a> 
+                contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © 
+                <a href="http://cloudmade.com">CloudMade</a>`,
+            maxZoom: 15,
+        }).addTo(map);
+
+        if (production.locations && production.locations.length > 0) {
+            L.marker([latitude, longitude]).addTo(map);
+        }
     }
 
     /** Muestra la ficha del actor y las películas en las que ha participado */
@@ -703,6 +733,20 @@ class VideoSystemView {
                             <div class="invalid-feedback">El actor es obligatorio.</div>
                             <div class="valid-feedback">Correcto.</div>
                         </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="m-0" id="mapid"></div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label" for="npLatitude">Latitud</label>
+                            <input type="text" class="form-control mb-3" id="npLatitude" name="npLatitude"
+                            placeholder="Latitud de la producción" value="">
+                            <div class="valid-feedback">Correcto.</div>
+
+                            <label class="form-label" for="npLongitude">Longitud</label>
+                            <input type="text" class="form-control" id="npLongitude" name="npLongitude"
+                            placeholder="Longitud de la producción" value="">
+                            <div class="valid-feedback">Correcto.</div>
+                        </div>
                         <div class="mb-12">
                             <button class="btn btn-primary" type="submit">Enviar</button>
                             <button class="btn btn-secondary" type="reset">Cancelar</button>
@@ -711,6 +755,40 @@ class VideoSystemView {
                 </div>
             </div>`,
         );
+
+        const mapContainer = document.getElementById("mapid");
+        mapContainer.style.height = "200px";
+        mapContainer.style.border = "1px solid black";
+
+        // El mapa se ubicará según las coordenadas y tendrá el zoom indicado en el segundo argumento
+        let map = L.map("mapid").setView(
+            [38.990831799999995, -3.9206173000000004],
+            2,
+        );
+
+        // Utilizamos OpenStreetMap para mostrar el mapa
+        L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: `Map data &copy; 
+                <a href="http://openstreetmap.org">OpenStreetMap</a> 
+                contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © 
+                <a href="http://cloudmade.com">CloudMade</a>`,
+            maxZoom: 15,
+        }).addTo(map);
+
+        // Genera un marcador al hacer click en el mapa
+        let marker;
+        map.on("click", function (event) {
+            if (!marker) {
+                marker = L.marker([event.latlng.lat, event.latlng.lng]).addTo(
+                    map,
+                );
+            }
+            // Modifica la posición del marcador
+            marker.setLatLng([event.latlng.lat, event.latlng.lng]);
+            // Actualizar la latitud y longitud en el formulario
+            document.forms.fNewProduction.npLatitude.value = event.latlng.lat;
+            document.forms.fNewProduction.npLongitude.value = event.latlng.lng;
+        });
     }
 
     /** Muestra el formulario para eliminar una producción */

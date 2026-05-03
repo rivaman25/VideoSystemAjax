@@ -64,6 +64,12 @@ function newProductionValidation(handler) {
         let isValid = true;
         let firstInvalidElement = null;
 
+        this.npLongitude.value = this.npLongitude.value.trim();
+        showValidationFeedback(this.npLongitude, true);
+
+        this.npLatitude.value = this.npLatitude.value.trim();
+        showValidationFeedback(this.npLatitude, true);
+
         if (!this.npActors.checkValidity()) {
             isValid = false;
             showValidationFeedback(this.npActors, false);
@@ -146,6 +152,8 @@ function newProductionValidation(handler) {
                 this.npCategories.selectedOptions,
                 this.npDirectors.selectedOptions,
                 this.npActors.selectedOptions,
+                this.npLongitude.value,
+                this.npLatitude.value,
             );
         }
 
@@ -187,6 +195,8 @@ function newProductionValidation(handler) {
     form.npCategories.addEventListener("change", handleSelectValidation);
     form.npDirectors.addEventListener("change", handleSelectValidation);
     form.npActors.addEventListener("change", handleSelectValidation);
+    form.npLongitude.addEventListener("change", handleTextInputValidation);
+    form.npLatitude.addEventListener("change", handleTextInputValidation);
 }
 
 function deleteProductionValidation(handler) {

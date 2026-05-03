@@ -452,6 +452,8 @@ class VideoSystemController {
         categories,
         directors,
         actors,
+        latitude,
+        longitude,
     ) => {
         // Gestión de la seguridad, evita que se pueda crear
         // una producción si el usuario no está autenticado
@@ -477,6 +479,8 @@ class VideoSystemController {
                 nationality,
                 synopsis,
                 image,
+                longitude,
+                latitude,
             );
 
             this.#model.addProduction(newProduction);
@@ -660,6 +664,16 @@ class VideoSystemController {
 
     // Backup de los objetos de VideoSystem
     handleBackup = () => {
+        // Gestión de la seguridad, evita que se pueda crear
+        // un backup si el usuario no está autenticado
+        if (!this.#user) {
+            this.#view.showToast(
+                "Para crear un backup es necesario estar autenticado.",
+                "danger",
+            );
+            return;
+        }
+
         const users = [];
         const categories = [];
         const productions = [];

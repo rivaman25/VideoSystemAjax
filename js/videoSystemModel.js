@@ -852,16 +852,25 @@ const VideoSystemModel = (function () {
                 nationality,
                 synopsis,
                 image,
+                longitude,
+                latitude,
             ) {
                 let production = this.#productions.get(title);
 
                 if (!production) {
+                    const locations = [];
+                    if (longitude && latitude) {
+                        locations.push(new Coordinate(longitude, latitude));
+                    }
+                    
                     production = new this.#productionConstructors[type](
                         title,
                         publication,
                         nationality,
                         synopsis,
                         image,
+                        null,
+                        locations,
                     );
                 }
 
