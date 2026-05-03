@@ -582,6 +582,10 @@ class VideoSystemView {
             "beforeend",
             '<li><a id="lupdateProductionCast"class="dropdown-item" href="#update-product-cast">Actualizar dirección y reparto</a></li>',
         );
+        suboptions.insertAdjacentHTML(
+            "beforeend",
+            '<li><a id="lBackup"class="dropdown-item" href="#backup">Backup</a></li>',
+        );
         menuOption.append(suboptions);
         this.menu.append(menuOption);
     }
@@ -1384,6 +1388,13 @@ class VideoSystemView {
                 "#",
                 event,
             );
+        });
+    }
+
+    bindBackupLink(handler) {
+        const backupLink = document.getElementById("lBackup");
+        backupLink.addEventListener("click", (event) => {
+            handler();
         });
     }
 
