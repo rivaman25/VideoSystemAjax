@@ -439,7 +439,19 @@ class VideoSystemController {
             this.#model.actors,
         );
         this.#view.bindNewProductionValidation(this.handleCreateProduction);
+
+        this.#view.bindNewProductionShowGeocoder(this.handlerShowGeocoder);
     };
+
+    // Muestra el geocoder para la búsqueda de ubicación de una nueva producción
+    handlerShowGeocoder = () => {
+        this.#view.showGeocoder();
+        this.#view.bindNewProductionGeocoder(this.handleNewProductionGeocoder);
+    }
+
+    handleNewProductionGeocoder = (latitude, longitude) => {
+        this.#view.showGeocoderResult(latitude, longitude);
+    }
 
     // Crea una nueva producción
     handleCreateProduction = (
@@ -780,7 +792,13 @@ class VideoSystemController {
             method: "POST",
             body: formData,
         })
-            .then((response) => response.text()) // Obtiene la respuesta como JSON
+            .then((response) => {
+                // Obtiene la respuesta
+                if (!response.ok) {
+                    throw new Error(response.status);
+                }
+                return response.text();
+            })
             .then(
                 // Muestra el mensaje con el nombre del archivo
                 (data) =>
@@ -794,7 +812,7 @@ class VideoSystemController {
                     error, // Muestra el mensaje de error
                 ) =>
                     this.#view.showToast(
-                        "Error al realizar backup: " + error,
+                        "No se ha podido realizar backup: " + error,
                         "danger",
                     ),
             );

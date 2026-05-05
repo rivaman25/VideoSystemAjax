@@ -8,6 +8,9 @@ import { setCookie } from "./util.js";
 class VideoSystemView {
     #detailsWindows = new Map(); // Registra las ventanas que se abren
     #loginModal; // Modal de login
+    #geocoderModal; // Modal geocoder
+    #map; // Mapa para el formulario de nueva producción
+    #marker; // Marcador para el mapa
 
     constructor() {
         this.main = document.getElementsByTagName("main")[0];
@@ -738,14 +741,15 @@ class VideoSystemView {
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="npLatitude">Latitud</label>
-                            <input type="text" class="form-control mb-3" id="npLatitude" name="npLatitude"
-                            placeholder="Latitud de la producción" value="">
+                            <input type="text" class="form-control" id="npLatitude" name="npLatitude"
+                            placeholder="Latitud de la producción" value="" readonly>
                             <div class="valid-feedback">Correcto.</div>
 
-                            <label class="form-label" for="npLongitude">Longitud</label>
+                            <label class="form-label mt-3" for="npLongitude">Longitud</label>
                             <input type="text" class="form-control" id="npLongitude" name="npLongitude"
-                            placeholder="Longitud de la producción" value="">
+                            placeholder="Longitud de la producción" value="" readonly>
                             <div class="valid-feedback">Correcto.</div>
+                            <button class="btn btn-primary btn-geocoder mt-2" type="button">Buscar localización</button>
                         </div>
                         <div class="mb-12">
                             <button class="btn btn-primary" type="submit">Enviar</button>
@@ -761,7 +765,7 @@ class VideoSystemView {
         mapContainer.style.border = "1px solid black";
 
         // El mapa se ubicará según las coordenadas y tendrá el zoom indicado en el segundo argumento
-        let map = L.map("mapid").setView(
+        this.#map = L.map("mapid").setView(
             [38.990831799999995, -3.9206173000000004],
             2,
         );
@@ -773,23 +777,92 @@ class VideoSystemView {
                 contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © 
                 <a href="http://cloudmade.com">CloudMade</a>`,
             maxZoom: 15,
-        }).addTo(map);
+        }).addTo(this.#map);
 
         // Genera un marcador al hacer click en el mapa
-        let marker;
-        map.on("click", function (event) {
-            if (!marker) {
-                marker = L.marker([event.latlng.lat, event.latlng.lng]).addTo(
-                    map,
-                );
+        this.#marker = null;
+        this.#map.on("click", (event) => {
+            if (!this.#marker) {
+                // Crea un marcador
+                this.#marker = L.marker([
+                    event.latlng.lat,
+                    event.latlng.lng,
+                ]).addTo(this.#map);
+            } else {
+                // Modifica la posición del marcador
+                this.#marker.setLatLng([event.latlng.lat, event.latlng.lng]);
             }
-            // Modifica la posición del marcador
-            marker.setLatLng([event.latlng.lat, event.latlng.lng]);
             // Actualizar la latitud y longitud en el formulario
             document.forms.fNewProduction.npLatitude.value = event.latlng.lat;
             document.forms.fNewProduction.npLongitude.value = event.latlng.lng;
         });
     }
+
+    /** Muestra un modal con un geocoder: dada una dirección nos devuelve las coordenadas */
+    showGeocoder = () => {
+        const geocoder = `
+            <div class="modal fade" id="geocoderModal" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" 
+                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Buscar ubicación</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="fGeocoder" name="fGeocoder" role="form" novalidate>
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Dirección</label>
+                                    <input type="text" class="form-control" id="address" name="address" aria-describedby="address">
+                                </div>
+                            </form>
+                            <div id="geocoderAddresses"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" form="fGeocoder" class="btn btn-primary">Buscar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+        this.main.insertAdjacentHTML("afterbegin", geocoder);
+
+        const geocoderModalEle = document.getElementById("geocoderModal");
+        this.#geocoderModal = new bootstrap.Modal(geocoderModalEle);
+
+        // Pone el foco en el primer input del modal
+        geocoderModalEle.addEventListener("shown.bs.modal", () => {
+            document.forms.fGeocoder.address.focus();
+        });
+
+        // Elimina el modal del DOM cuando se cierra para evitar duplicar HTML
+        geocoderModalEle.addEventListener(
+            "hidden.bs.modal",
+            () => {
+                geocoderModalEle.remove();
+            },
+            { once: true }, // Solo se ejecuta una vez
+        );
+
+        // Muestra el modal
+        this.#geocoderModal.show();
+    };
+
+    // Muestra el marcador y las coordenadas seleccionadas en el Geocoder
+    showGeocoderResult = (latitude, longitude) => {
+        this.#geocoderModal.hide(); // Oculta el modal del Geocoder
+        if (!this.#marker) {
+            // Crea un marcador
+            this.#marker = L.marker([latitude, longitude]).addTo(this.#map);
+        } else {
+            // Modifica la posición del marcador
+            this.#marker.setLatLng([latitude, longitude]);
+        }
+        this.#map.setView([latitude, longitude], 10);
+        document.forms.fNewProduction.npLatitude.value = latitude;
+        document.forms.fNewProduction.npLongitude.value = longitude;
+    };
 
     /** Muestra el formulario para eliminar una producción */
     showDeleteProductionForm(productions) {
@@ -1358,6 +1431,86 @@ class VideoSystemView {
 
     bindNewProductionValidation(handler) {
         newProductionValidation(handler);
+    }
+
+    bindNewProductionShowGeocoder(handler) {
+        const btn = document.querySelector(".btn-geocoder");
+        btn.addEventListener("click", (event) => {
+            handler();
+        });
+    }
+
+    /** Muestra el resultado de la búsqueda del geocoder y pasa las coordenadas al handler */
+    bindNewProductionGeocoder(handler) {
+        const form = document.forms.fGeocoder;
+        const addresses = document.getElementById("geocoderAddresses");
+
+        form.addEventListener("submit", function (event) {
+            const url = new URL("https://nominatim.openstreetmap.org/search");
+            url.searchParams.append("format", "json");
+            url.searchParams.append("limit", 3);
+            url.searchParams.append("q", this.address.value);
+            
+            fetch(url, {
+                method: "get",
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    addresses.replaceChildren();
+
+                    if (data.length > 0) {
+                        const list = document.createElement("div");
+                        list.classList.add("list-group");
+
+                        data.forEach((address) => {
+                            list.insertAdjacentHTML(
+                                "beforeend",
+                                `<a href="#" data-lat="${address.lat}" data-lon="${address.lon}" 
+                                class="list-group-item list-group-item-action">
+                            ${address.display_name}</a>`,
+                            );
+                        });
+
+                        addresses.append(list);
+
+                        const links = list.getElementsByTagName("a");
+                        for (const link of links) {
+                            link.addEventListener("click", (event) => {
+                                event.preventDefault();
+
+                                for (const link of links) {
+                                    link.classList.remove("active");
+                                }
+                                event.currentTarget.classList.add("active");
+
+                                handler(
+                                    event.currentTarget.dataset.lat,
+                                    event.currentTarget.dataset.lon,
+                                );
+                            });
+                        }
+                    } else {
+                        addresses.insertAdjacentHTML(
+                            "afterbegin",
+                            `<div class="text-info">
+                                <i class="bi bi-info-circle-fill"></i>
+                                No se han localizado ubicaciones para la dirección introducida.
+                            </div>`,
+                        );
+                    }
+                })
+                .catch((error) => {
+                    addresses.replaceChildren();
+                    addresses.insertAdjacentHTML(
+                        "afterbegin",
+                        `<div class="text-danger">
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                            No se ha podido establecer la conexión con el servidor de mapas.
+                        </div>`,
+                    );
+                });
+            event.preventDefault();
+        });
     }
 
     bindShowDeleteProductionForm(handler) {
